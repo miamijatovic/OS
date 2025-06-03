@@ -22,5 +22,32 @@ The program in `zadatak1.c` continuously calculates squares of natural numbers a
 
 ### How to Run
 ```bash
+
+kill -SIGUSR1 <PID>   # Show the current number
+kill -SIGTERM <PID>   # Save progress and exit
+
+Assignment 2: Mutual Exclusion
+Description
+
+zadatak2.c implements Peterson’s algorithm to ensure mutual exclusion between two processes accessing a critical section. Each process prints its ID and counters (k, m) to demonstrate interleaved execution.
+Key Features:
+
+    Shared memory (mmap)
+
+    Peterson’s algorithm for synchronization
+
+    Nested loops to simulate workload
+
+How to Run
+
+gcc -o zadatak2 zadatak2.c
+./zadatak2
+
+Expected output will alternate between the two processes:
+
+Process 0: k = 1, m = 1
+Process 1: k = 1, m = 1
+...
+
 gcc -o zadatak1 zadatak1.c -lm
 ./zadatak1
