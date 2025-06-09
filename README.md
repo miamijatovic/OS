@@ -1,53 +1,139 @@
-# Operating Systems – Assignment 1 & Assignment 2
+# Operating Systems Tasks Repository
 
-This repository contains two C programs created for the **Operating Systems** course. The tasks focus on signal handling, file operations, shared memory, and mutual exclusion.
-
-## 📄 Contents
-
-- `zadatak1.c` – Square number processing with signal handling
-- `zadatak2.c` – Mutual exclusion using Peterson’s algorithm
+This repository contains 5 C-language projects demonstrating various Operating Systems concepts:
+1. Signal handling and file persistence
+2. Process synchronization using Peterson's algorithm
+3. Thread synchronization with Bakery algorithm for resource allocation
+4. Semaphore-based producer-consumer (carousel simulation)
+5. Dining Philosophers problem with monitor and condition variables
 
 ---
 
-## 🧠 Assignment 1: Signals and File Handling
+## 📁 Task 1: Signal-based Square Generator
 
-### Description
-The program in `zadatak1.c` continuously calculates squares of natural numbers and writes them to `obrada.txt` every 5 seconds. It uses `status.txt` to store the last processed number so that it can resume correctly after being terminated.
+**Source file:** `task1.c`
 
-### Handled Signals:
+**Description:**  
+Continuously calculates and appends successive square numbers to `obrada.txt`, every 5 seconds.  
+- Handles `SIGUSR1` to print current processing number.  
+- On `SIGTERM`, persists the last processed number to `status.txt` and exits cleanly.  
+- On `SIGINT`, exits without updating status (default status = 0).  
+- On startup, resumes from last square based on `obrada.txt` and optionally `status.txt`.
 
-- `SIGUSR1` – Prints the currently processed number
-- `SIGTERM` – Writes the last number to `status.txt` and gracefully exits
-- `SIGINT` – Exits immediately without saving state
-
-### How to Run
+**Usage:**  
 ```bash
+gcc task1.c -o task1 -lm
+./task1
+kill -USR1 <pid>
+kill -TERM <pid>
 
-kill -SIGUSR1 <PID>   # Show the current number
-kill -SIGTERM <PID>   # Save progress and exit
+📁 Task 2: Peterson’s Algorithm for Two Processes
 
-Assignment 2: Mutual Exclusion
-Description
+Source file: task2.c
 
-zadatak2.c implements Peterson’s algorithm to ensure mutual exclusion between two processes accessing a critical section. Each process prints its ID and counters (k, m) to demonstrate interleaved execution.
-Key Features:
+Description:
+Demonstrates mutual exclusion between a parent and child process using Peterson's algorithm.
 
-    Shared memory (mmap)
+    Alternates entering a critical section guarded by shared memory flags and who’s turn (PRAVO).
 
-    Peterson’s algorithm for synchronization
+    Each process loops 5 iterations with 5 inner steps, printing its ID in the critical section.
 
-    Nested loops to simulate workload
+Usage:
 
-How to Run
+gcc task2.c -o task2
+./task2
 
-gcc -o zadatak2 zadatak2.c
-./zadatak2
+📁 Task 3: Bakery Algorithm for Threaded Table Reservation
 
-Expected output will alternate between the two processes:
+Source file: task3.c
 
-Process 0: k = 1, m = 1
-Process 1: k = 1, m = 1
-...
+Description:
+Multiple threads attempt to reserve a limited number of tables using the Bakery algorithm to ensure fairness.
 
-gcc -o zadatak1 zadatak1.c -lm
-./zadatak1
+    Threads choose a random table, enter critical section to reserve if free, then exit.
+
+    Continues until no tables remain. Prints reservation attempts and current table states.
+
+Usage:
+
+gcc task3.c -o task3 -lpthread
+./task3 <num_threads> <num_tables>
+
+📁 Task 4: Carousel (Bounded Buffer) with Semaphores
+
+Source file: task4.c
+
+Description:
+Simulates a carousel ride with 15 visitors (producer‑consumer model) and capacity N=5.
+
+    posjetitelj threads wait for empty seats, board, notify when full, ride, unboard.
+
+    vrtuljak thread waits for full ride, runs, signals when done.
+
+    Uses four semaphores: prazna_mjesta, pun, zavrseno, and mutex.
+
+Usage:
+
+gcc task4.c -o task4 -lpthread
+./task4
+
+📁 Task 5: Dining Philosophers with Monitor
+
+Source file: task5.c
+
+Description:
+Classic Dining Philosophers problem implemented using a monitor (mutex + condition variables).
+
+    Five philosophers alternate thinking and eating.
+
+    Wait until both forks (represented as vilice[]) are available, then eat.
+
+    Uses pthread_mutex_t and pthread_cond_t to prevent deadlock and ensure fairness.
+
+Usage:
+
+gcc task5.c -o task5 -lpthread
+./task5
+
+🔧 Compilation & Running
+
+Each task can be compiled and run independently:
+
+# Example for Task 2
+gcc task2.c -o task2
+./task2
+
+For threaded programs, remember to link with pthread:
+
+gcc task3.c -o task3 -lpthread
+./task3 4 3  # 4 threads, 3 tables
+
+🧠 Concepts Covered
+
+    Signal handling & state persistence (Task 1)
+
+    Process synchronization: Peterson’s algorithm (Task 2)
+
+    Thread synchronization: Bakery algorithm (Task 3)
+
+    Semaphore-based synchronization: producer-consumer simulation (Task 4)
+
+    Monitor-based concurrency: Dining Philosophers problem (Task 5)
+
+📝 Notes
+
+    File names, constants, and behavior match original code.
+
+    Error handling is basic—focus is on demonstrating OS synchronization primitives.
+
+    For more robust usage, consider adding argument parsing, logging, or timeout handling.
+
+📚 References
+
+These implementations follow standard OS synchronization patterns:
+
+    Peterson’s and Bakery algorithms (Dekker, Lamport)
+
+    Semaphore-based bounded buffer
+
+    Monitor solution for Dining Philosophers (Hoare-style)
